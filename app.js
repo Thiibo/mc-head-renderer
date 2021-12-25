@@ -25,6 +25,36 @@ CANVAS.init(() => {
     const $backgroundColor = document.getElementById('backgroundColor');
 
 
+    // == URL Params ==========================
+    const urlParams = new URLSearchParams(window.location.search);
+
+    let uuidParam = urlParams.get('uuid');
+    let isPrimaryEnabledParam = urlParams.get('isPrimaryEnabled');
+    let isSecundaryEnabledParam = urlParams.get('isSecundaryEnabled');
+    let isAnimationEnabledParam = urlParams.get('isAnimationEnabled');
+    let backgroundColorParam = urlParams.get('backgroundColor');
+
+    if (uuidParam) {
+        $uuid.value = uuidParam;
+        $textureMethod.value = 'uuid';
+        uuidInput();
+    }
+    // I know the following code looks ugly...
+    if (typeof isPrimaryEnabledParam == 'string' && isPrimaryEnabledParam.toLowerCase() == 'true') $enablePrimaryLayer.checked = true;
+    if (typeof isPrimaryEnabledParam == 'string' && isPrimaryEnabledParam.toLowerCase() == 'false') $enablePrimaryLayer.checked = false;
+    if (typeof isSecundaryEnabledParam == 'string' && isSecundaryEnabledParam.toLowerCase() == 'true') $enableSecundaryLayer.checked = true;
+    if (typeof isSecundaryEnabledParam == 'string' && isSecundaryEnabledParam.toLowerCase() == 'false') $enableSecundaryLayer.checked = false;
+    if (typeof isAnimationEnabledParam == 'string' && isAnimationEnabledParam.toLowerCase() == 'true') $enableAnimation.checked = true;
+    if (typeof isAnimationEnabledParam == 'string' && isAnimationEnabledParam.toLowerCase() == 'false') $enableAnimation.checked = false;
+    $backgroundColor.value = /^\#[\da-f]{6}$/i.test(backgroundColorParam) ? backgroundColorParam : '#eeeeee';
+
+    function setURLParam(param, val) {
+        urlParams.set(param, val);
+        let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + urlParams.toString();
+        window.history.pushState({path: newUrl}, '', newUrl);
+    }
+
+
 
     // == Animation function ==========================
     let isAnimationEnabled = $enableAnimation.checked;
@@ -44,14 +74,16 @@ CANVAS.init(() => {
     // == Settings ==========================
     // Primary layer
     function primaryLayerEnabledChanged() {
-        CANVAS.setPrimaryVisibility($enablePrimaryLayer.checked)
+        CANVAS.setPrimaryVisibility($enablePrimaryLayer.checked);
+        setURLParam('isPrimaryEnabled', $enablePrimaryLayer.checked.toString());
     }
     primaryLayerEnabledChanged();
     $enablePrimaryLayer.addEventListener('change', primaryLayerEnabledChanged);
 
     // Secundary layer
     function secundaryLayerEnabledChanged() {
-        CANVAS.setSecundaryVisibility($enableSecundaryLayer.checked)
+        CANVAS.setSecundaryVisibility($enableSecundaryLayer.checked);
+        setURLParam('isSecundaryEnabled', $enableSecundaryLayer.checked.toString());
     }
     secundaryLayerEnabledChanged();
     $enableSecundaryLayer.addEventListener('change', secundaryLayerEnabledChanged);
@@ -59,25 +91,26 @@ CANVAS.init(() => {
     // Animation
     function animationEnabledChanged() {
         isAnimationEnabled = $enableAnimation.checked;
+        setURLParam('isAnimationEnabled', $enableAnimation.checked.toString());
     }
+    animationEnabledChanged();
     $enableAnimation.addEventListener('change', animationEnabledChanged);
 
     // Background color
-    $backgroundColor.addEventListener('change', () => {
+    function backgroundColorChanged() {
         CANVAS.setBackgroundColor(parseInt(`0x${$backgroundColor.value.substr(1)}`));
-    });
-    $backgroundColor.value = "#eeeeee";
+        setURLParam('backgroundColor', $backgroundColor.value);
+    }
+    $backgroundColor.addEventListener('change', backgroundColorChanged);
+    backgroundColorChanged();
 
 
 
     // == Inputs ==========================
-    let textureMethod = $textureMethod.value;
-    let uuid = $uuid.value.replaceAll('-', '');
-
     function textureMethodChanged() {
         $uploadSkinTab.classList.add('hidden');
         $uuidTab.classList.add('hidden');
-        textureMethod = $textureMethod.value;
+        let textureMethod = $textureMethod.value;
         if (textureMethod == 'file') {
             $uploadSkinTab.classList.remove('hidden');
             if ($uploadSkin.files[0]) uploadedSkin();
@@ -113,7 +146,7 @@ CANVAS.init(() => {
 
     // UUID input
     function uuidInput() {
-        uuid = $uuid.value.replaceAll('-', '');
+        let uuid = $uuid.value.replaceAll('-', '');
         CANVAS.setTextureFromURL('https://crafatar.com/skins/' + uuid);
     }
     $uuidSet.addEventListener('click', uuidInput);
