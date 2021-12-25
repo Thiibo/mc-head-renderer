@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft head renderer</title>
+</head>
+<body>
+    <div class="options">
+        <div id="changeTexture">
+            <label for="textureMethod">Method:</label>
+            <select name="textureMethod" id="textureMethod">
+                <option value="file">From file...</option>
+                <option value="uuid">From UUID...</option>
+            </select>
+            <div class="tab" id="uploadSkinTab">
+                <label for="uploadSkin">Upload skin file (.png format):</label>
+                <input type="file" name="uploadSkin" id="uploadSkin" accept=".png">
+            </div>
+            <div class="tab hidden" id="uuidTab">
+                <label for="uuid">Type here the UUID of a player to show the head of:</label>
+                <input type="text" name="uuid" id="uuid" placeholder="UUID..." minlength="32" maxlength="35">
+                <button id="uuidSet">Set</button>
+                <button id="getUUIDOfPlayer">Click here to set via player name</button>
+            </div>
+        </div>
+        <div class="option">
+            <input type="checkbox" name="enablePrimaryLayer" id="enablePrimaryLayer" checked>
+            <label for="enablePrimaryLayer">Enable primary layer?</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" name="enableSecundaryLayer" id="enableSecundaryLayer" checked>
+            <label for="enableSecundaryLayer">Enable secundary layer?</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" name="enableAnimation" id="enableAnimation" checked>
+            <label for="enableAnimation">Enable animation?</label>
+        </div>
+        <div class="option">
+            <input type="color" name="backgroundColor" id="backgroundColor" value="#eeeeee">
+        </div>
+    </div>
+    <div id="putCanvasHere"></div>
+    <footer>
+        <b>Made with ❤ by Thiibo.</b> | <a href="https://github.com/Thiibo/mc-head-renderer/">Github</a><br>
+        This project makes use of ThreeJS.<br>
+        This page uses crafatar.com to get the skin from a given UUID (not included in module).<br>
+        This page also uses the official Mojang API to turn a player name into a UUID (not included in module).<br>
+        This project is not affiliated with Mojang AB or Microsoft.
+    </footer>
+
+    <script src="lib/three.min.js"></script>
+    <script src="lib/threeOrbitControls.js"></script>
+    <script src="lib/canvas.js"></script>
+    <script src="app.js"></script>
+    <style>
+        .option {display: block;}
+        .hidden {display: none;}
+        #changeTexture {
+            background: lightgray;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .headRender {margin-top: 20px;}
+        .headRender canvas {border: 1px solid black;}
+        footer {
+            position: absolute;
+            bottom: 0;
+            margin: 10px;
+        }
+    </style>
+</body>
+</html>
