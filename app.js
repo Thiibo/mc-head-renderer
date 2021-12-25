@@ -1,6 +1,6 @@
 // Create head canvas
 const CANVAS = new HeadCanvas({
-    textureURL: '../img/grian.png',
+    textureURL: 'img/grian.png',
     width: 350,
     height: 350,
     distance: 2.5,
